@@ -1,7 +1,12 @@
 # A4-multi-agent
 
-**Track:** A-core
+Beginner-friendly starter code for this Module A capability.
 
-**Status:** Planned — not implemented yet.
+## Run
+1. Use Python 3.11 or newer.
+2. Create a virtual environment.
+3. Install: `pip install -r requirements.txt`
+4. Test: `python -m pytest -q`
 
-See [the parent module map](../../../docs/MODULE-MAP.md) for the scope, acceptance evidence and implementation level. Keep code, tests, sample data and a short demo guide inside this module folder. Do not mark this module complete until tests and a reproducible local demo pass.
+## Important
+This is starter/learning code, not a production-ready system. Some integrations are demo or plan-only. No production remediation or deployment is executed. Human approval remains mandatory.
