@@ -1,0 +1,9 @@
+[
+  {
+    "input": {
+      "reason": "OOMKilled",
+      "exit_code": 137
+    },
+    "expected": "possible_memory_issue"
+  }
+]
