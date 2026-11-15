@@ -1,1 +1,0 @@
-Service-level tests will be added with the first implementation milestone. Root tests verify repository contracts.
