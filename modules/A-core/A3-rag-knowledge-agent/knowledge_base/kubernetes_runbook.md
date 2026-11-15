@@ -1,0 +1,1 @@
+# Kubernetes OOMKilled Runbook\nCheck previous logs, Pod events, memory usage, configured limits and node capacity. Do not increase limits without evidence.\n
