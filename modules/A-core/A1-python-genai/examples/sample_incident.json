@@ -1,0 +1,7 @@
+{
+  "service": "survey-service",
+  "pod": "survey-123",
+  "reason": "OOMKilled",
+  "exit_code": 137,
+  "restart_count": 3
+}
