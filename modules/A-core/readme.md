@@ -1,296 +1,267 @@
 ============================================================
-          AI SRE COPILOT - MODULE A EXPLAINED
+             AI SRE COPILOT - MODULE A
 ============================================================
 
-FIRST: WHAT ARE WE BUILDING?
+1. WHAT ARE WE BUILDING?
+------------------------
 
-Imagine you are working as an SRE in a company. The company has an application running on Kubernetes. The application has two microservices:
+We will build THREE applications:
 
-1. AUTH SERVICE - Handles user registration and login.
+APPLICATION 1: AUTH SERVICE
+- User registration.
+- User login.
+- User authentication.
 
-2. SURVEY SERVICE - Allows users to submit surveys and view combined results.
+APPLICATION 2: SURVEY SERVICE
+- Display survey questions.
+- Accept user responses.
+- Display combined survey results.
 
-Now imagine the Survey Service suddenly stops working. Normally, an SRE engineer has to:
-
-- Check alerts.
-- Check application logs.
-- Check Kubernetes events.
-- Investigate the failure.
-- Find the root cause.
-- Decide how to fix it.
-- Prepare a configuration change.
-- Get approval.
-- Deploy the fix.
+APPLICATION 3: AI SRE COPILOT
+- Monitor Auth and Survey services.
+- Detect application failures.
+- Investigate incidents.
+- Use AI to identify possible causes.
+- Recommend remediation.
+- Ask a human for approval.
+- Deploy approved changes.
 - Verify application health.
 
-Our AI SRE Copilot will help automate this investigation and remediation workflow.
+Think of Auth and Survey as our sample applications.
+AI SRE Copilot is the main project we are building.
 
-IMPORTANT: The AI will NOT independently modify production systems. It will investigate, explain the problem, recommend a fix, show the YAML changes and rollback plan, and ask a human
-for approval before proceeding.
+IMPORTANT:
+AI will NOT independently modify production systems.
+It must explain the problem, show the proposed fix and
+rollback plan, and wait for human approval.
 
 ============================================================
-MODULE A - 8 CORE CAPABILITIES
+2. WHAT ARE API AND API CALLS?
 ============================================================
 
-Think of Module A as the ENGINE of our complete project. Each folder will contain actual Python code, configuration, tests, sample data and its own README.
+API = A way for two applications to communicate.
 
-------------------------------------------------------------
-A1 - PYTHON FOR GENERATIVE AI
-------------------------------------------------------------
+API CALL = A request one application sends to another.
 
-WHAT WILL IT DO?
-
-This is the foundation of our entire AI application. We will use Python to build the application logic.
 Example:
 
-- Receive an incident.
-- Read JSON data.
-- Call external APIs.
-- Process Kubernetes information.
-- Communicate with AI models.
-- Handle errors.
-- Return structured results.
+AI SRE Copilot asks Kubernetes:
+"Tell me why my Survey Service Pod failed."
 
-What is an API?
+Kubernetes replies:
+"The Pod was OOMKilled."
 
-API stands for Application Programming Interface. Imagine you have a restaurant. There are three people involved:
+The request and response are an API interaction.
 
-1. You (Customer)
-2. Waiter
-3. Kitchen (Chef)
+In our project, Python is the main programming language
+used to build the AI SRE Copilot application.
 
-You cannot enter the kitchen and prepare the food yourself. You tell the waiter what you want. The waiter communicates your order to the kitchen and brings the food back.
+It will communicate with these systems:
 
-       YOU
-        |
-        | Request: I want a pizza
-        |
-        v
-      WAITER
-        |
-        | Communicates your order
-        |
-        v
-      KITCHEN
-        |
-        | Prepares the pizza
-        |
-        v
-      WAITER
-        |
-        | Returns your order
-        |
-        v
-       YOU
+1. Kubernetes API
+   Gets Pod status, events, logs and deployment details.
 
-An API works in exactly the same way. API means Application Programming Interface. An API allows two different software applications to communicate with each other.
+2. Monitoring API
+   Gets CPU, memory, alerts and health information.
 
-For example:
-* Our Python application wants information from Kubernetes.
-* Our Python application wants an AI model to analyze an incident.
-* Our Survey Service wants to communicate with our Auth Service.
+3. OpenAI API
+   Analyzes incident evidence and recommends solutions.
 
-What is the role of APIs in our AI SRE Copilot?
+4. Slack API
+   Sends incident notifications and receives human decisions.
 
-This is the most important part. Our project will use APIs to connect different components. Let’s take a real production-like incident.
-"Scenario: Survey Service is failing"
+5. GitHub API
+   Creates branches, updates YAML and creates Pull Requests.
 
-Our AI SRE Copilot needs information from different systems to investigate the problem.
+6. Argo CD API
+   Checks deployment status and synchronizes approved changes.
 
-
-WHAT IS AN AI API CALL?
-
-An API call is simply a request sent from one application to another through an API. For example, imagine our Survey Service needs to check whether a user is logged in.
-An API call means asking another application for information or requesting it to perform an action.
-
-For example: Our AI SRE Copilot asks Kubernetes: “Tell me the status of my Survey Service Pods.”
-
-Kubernetes replies: “One Pod is OOMKilled.”
-
-That request and response are an API call.
-
-
-================================================================
-                    OUR COMPLETE PROJECT
-================================================================
+============================================================
+3. COMPLETE PROJECT FLOW
+============================================================
 
                          USER
                            |
                            v
-                 +-------------------+
-                 |   SURVEY WEBSITE  |
-                 +-------------------+
+                  +------------------+
+                  |  SURVEY WEBSITE  |
+                  +------------------+
                            |
                +-----------+-----------+
                |                       |
                v                       v
-     +------------------+    +----------------------+
-     | APPLICATION 1    |    | APPLICATION 2        |
-     | AUTH SERVICE     |    | SURVEY SERVICE       |
-     |                  |    |                      |
-     | User Registration|    | Display Questions   |
-     | User Login       |    | Submit Responses     |
-     | Authentication   |    | Combined Results     |
-     +------------------+    +----------------------+
+        +--------------+       +----------------+
+        | AUTH SERVICE |       | SURVEY SERVICE |
+        |              |       |                |
+        | Registration |       | Questions      |
+        | Login        |       | Submissions     |
+        | Authentication|      | Results        |
+        +--------------+       +----------------+
                ^                       |
                |                       |
                +-----------------------+
-                  API COMMUNICATION
-                  Survey Service asks
-                  Auth Service to verify
-                  the logged-in user.
+                 API communication:
+                 Survey verifies users
+                 through Auth Service.
 
 
-================================================================
-                 APPLICATION 3: AI SRE COPILOT
-================================================================
+============================================================
+           APPLICATION 3: AI SRE COPILOT
+============================================================
 
-                 +---------------------------+
-                 |      AI SRE COPILOT       |
-                 |      Python Application  |
-                 +---------------------------+
-                              ^
-                              |
-                 Application failure detected
-                              |
-                              |
-              +---------------+---------------+
-              |                               |
-              |                               |
-              v                               v
-     +-------------------+          +-------------------+
-     | KUBERNETES API    |          | MONITORING API    |
-     |                   |          |                   |
-     | Pod status        |          | CPU metrics       |
-     | Pod events        |          | Memory metrics    |
-     | Pod logs          |          | Alerts             |
-     | Restart count     |          | Application health |
-     +-------------------+          +-------------------+
-              |                               |
-              +---------------+---------------+
-                              |
-                              v
-                 +---------------------------+
-                 |      AI SRE COPILOT       |
-                 |                           |
-                 | Collects incident data   |
-                 | Correlates evidence      |
-                 +---------------------------+
-                              |
-                              v
-                    +-------------------+
-                    |    OPENAI API     |
-                    |                   |
-                    | AI Analysis       |
-                    | Root Cause        |
-                    | Recommendations   |
-                    +-------------------+
-                              |
-                              v
-                 +---------------------------+
-                 |      AI SRE COPILOT       |
-                 |                           |
-                 | Prepares remediation     |
-                 | Shows YAML changes       |
-                 | Explains risks           |
-                 | Prepares rollback plan   |
-                 +---------------------------+
-                              |
-                              v
-                 +---------------------------+
-                 |       HUMAN APPROVAL      |
-                 |                           |
-                 | APPROVE / REJECT / HOLD   |
-                 +---------------------------+
-                              |
-                              v
-                    +-------------------+
-                    |     SLACK API     |
-                    |                   |
-                    | Sends incident    |
-                    | Receives decision |
-                    +-------------------+
-                              |
-                       If APPROVED
-                              |
-                              v
-                    +-------------------+
-                    |    GITHUB API     |
-                    |                   |
-                    | Create branch     |
-                    | Update YAML       |
-                    | Create Pull Request|
-                    +-------------------+
-                              |
-                              v
-                    +-------------------+
-                    |   CI VALIDATION   |
-                    |                   |
-                    | YAML validation   |
-                    | Security checks   |
-                    | Automated tests   |
-                    +-------------------+
-                              |
+                  +----------------------+
+                  |    AI SRE COPILOT    |
+                  |    Python Application|
+                  +----------------------+
+                             |
+                     Incident detected
+                             |
+              +--------------+--------------+
+              |                             |
+              v                             v
+       +--------------+              +--------------+
+       | KUBERNETES   |              | MONITORING    |
+       | API           |              | API           |
+       |              |              |              |
+       | Pod status   |              | CPU metrics   |
+       | Pod events   |              | Memory metrics|
+       | Pod logs     |              | Alerts        |
+       | Restarts     |              | Health        |
+       +--------------+              +--------------+
+              |                             |
+              +--------------+--------------+
+                             |
+                             v
+                  +----------------------+
+                  |    AI SRE COPILOT    |
+                  | Collects evidence    |
+                  +----------------------+
+                             |
+                             v
+                      +-------------+
+                      |  OPENAI API |
+                      |             |
+                      | AI analysis |
+                      | Root cause  |
+                      | Suggestions |
+                      +-------------+
+                             |
+                             v
+                  +----------------------+
+                  |    AI SRE COPILOT    |
+                  | Prepares YAML change |
+                  | Explains risks       |
+                  | Prepares rollback    |
+                  +----------------------+
+                             |
+                             v
+                  +----------------------+
+                  |   HUMAN APPROVAL     |
+                  |                      |
+                  | APPROVE / REJECT     |
+                  | HOLD                 |
+                  +----------------------+
+                             |
+                             v
+                       +-----------+
+                       | SLACK API |
+                       |           |
+                       | Sends     |
+                       | incident  |
+                       | Receives  |
+                       | decision  |
+                       +-----------+
+                             |
+                      If APPROVED
+                             |
+                             v
+                       +-----------+
+                       | GITHUB API|
+                       |           |
+                       | New branch|
+                       | YAML update|
+                       | Pull Request|
+                       +-----------+
+                             |
+                             v
+                       +-----------+
+                       | CI CHECKS |
+                       |           |
+                       | YAML      |
+                       | Security  |
+                       | Tests     |
+                       +-----------+
+                             |
                        If checks pass
-                              |
-                              v
-                    +-------------------+
-                    |    ARGO CD API    |
-                    |                   |
-                    | Sync approved     |
-                    | configuration     |
-                    +-------------------+
-                              |
-                              v
-                    +-------------------+
-                    |   KUBERNETES      |
-                    |                   |
-                    | Deploy changes    |
-                    +-------------------+
-                              |
-                              v
-                 +---------------------------+
-                 |      AI SRE COPILOT       |
-                 |                           |
-                 | Checks Pod health        |
-                 | Checks application health|
-                 | Checks monitoring metrics|
-                 | Records incident result  |
-                 +---------------------------+
-                              |
-                              v
-                     INCIDENT RESOLVED
-                              |
-                              v
-                    HUMAN GETS FINAL REPORT
-      
+                             |
+                             v
+                       +-----------+
+                       | ARGO CD   |
+                       | API       |
+                       |           |
+                       | Sync      |
+                       | approved  |
+                       | changes   |
+                       +-----------+
+                             |
+                             v
+                       +-----------+
+                       | KUBERNETES|
+                       |           |
+                       | Deploy    |
+                       | changes   |
+                       +-----------+
+                             |
+                             v
+                  +----------------------+
+                  |    AI SRE COPILOT    |
+                  | Checks Pod health    |
+                  | Checks app health    |
+                  | Checks metrics       |
+                  | Records result       |
+                  +----------------------+
+                             |
+                             v
+                      INCIDENT RESOLVED
+                             |
+                             v
+                      FINAL REPORT
 
-1.Kubernetes API - Collects Pod, Deployment, Events and Logs information.
 
-2.Monitoring API - Collects metrics, alerts and application health information.
+IMPORTANT:
+- Human approval is mandatory.
+- Failed CI checks stop deployment.
+- No automatic production changes.
+- Rollback information is prepared before approval.
 
-3.OpenAI API - Analyzes collected evidence and recommends remediation.
+============================================================
+4. MODULE A - 8 CORE CAPABILITIES
+============================================================
 
-4.GitHub API - Creates branches, updates YAML files and creates Pull Requests.
+A1. PYTHON FOR GENERATIVE AI
+----------------------------
+Purpose:
+Build the Python foundation of our AI application.
 
-5.Slack API - Sends incident notifications and receives human approval.
+We will learn and implement:
+- Python fundamentals and OOP.
+- Functions and exception handling.
+- JSON and file handling.
+- API communication.
+- AI model API calls.
+- Structured data handling.
 
-6.Argo CD API - Checks deployment status and manages approved synchronisation.  
-
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-FILES WE WILL CREATE:
+Files:
 
 A1-python-genai/
-|
 |-- README.md
 |-- requirements.txt
-|-- config.py
-|-- main.py
-|-- api_client.py
-|-- json_handler.py
-|-- exceptions.py
-|-- models.py
+|-- config.py          # Application configuration
+|-- main.py            # Application entry point
+|-- api_client.py      # Communicates with APIs
+|-- json_handler.py    # Processes JSON data
+|-- exceptions.py      # Handles errors
+|-- models.py          # Defines data structures
 |-- tests/
 |   |-- test_api_client.py
 |   |-- test_json_handler.py
@@ -298,170 +269,94 @@ A1-python-genai/
 |-- examples/
     |-- sample_incident.json
 
-WHAT EACH FILE DOES:
-
-config.py - Stores application configuration.
-
-main.py - Starts the Python application.
-
-api_client.py - Communicates with external APIs, including AI providers.
-
-json_handler.py - Reads and processes JSON information.
-
-exceptions.py - Handles application errors.
-
-models.py - Defines the structure of incoming and outgoing data.
-
-requirements.txt - Lists Python packages required by this module.
-
-tests/ - Checks whether the code works correctly.
-
-examples/ - Contains sample incident information.
-
-RESULT: We will have a working Python foundation that can communicate with APIs and AI models.
+Result:
+A working Python foundation for API and AI communication.
 
 
-------------------------------------------------------------
-A2 - AGENT FOUNDATIONS
-------------------------------------------------------------
+A2. AGENT FOUNDATIONS
+---------------------
+Purpose:
+Build an AI agent that can investigate incidents.
 
-WHAT IS AN AI AGENT?
+An AI agent can receive a task, collect information,
+analyze it and use tools to complete the task.
 
-A normal AI chatbot answers questions. An AI agent can receive a task, analyze information, choose an action and use tools to complete the task.
+Example:
+Task: Investigate why Survey Service is failing.
 
-Example: Task: Investigate why the Survey Service is failing.
+The agent:
+1. Understands the task.
+2. Identifies required information.
+3. Calls investigation tools.
+4. Analyzes the results.
+5. Produces a diagnosis.
 
-The agent will:
-1. Understand the task.
-2. Identify which information is required.
-3. Call the appropriate tools.
-4. Analyze the collected information.
-5. Produce a diagnosis.
+Reflex Agent:
+IF Pod is OOMKilled, classify it as a possible
+memory-related incident.
 
-WHAT IS A REFLEX AGENT - Imagine a simple rule: IF a Kubernetes pod is OOMKilled, THEN classify the incident as a memory-related issue. This is a basic reflex.
+ReAct:
+THINK -> ACT -> OBSERVE -> THINK AGAIN.
 
-WHAT IS ReAct - ReAct means Reasoning + Acting. The agent follows a cycle: THINK -> ACT -> OBSERVE -> THINK AGAIN. Example:
-
-Think: I need to investigate the failed pod.
-Act: Call the Kubernetes investigation tool.
-Observe: The pod was terminated with exit code 137.
-Think again: I should inspect its memory limit and previous logs.
-
-FILES WE WILL CREATE:
+Files:
 
 A2-agent-foundations/
-|
 |-- README.md
 |-- requirements.txt
-|-- agent.py
-|-- agent_state.py
-|-- prompts.py
-|-- tool_registry.py
-|-- reflex_rules.py
-|-- react_agent.py
-|-- memory.py
+|-- agent.py             # Main agent logic
+|-- agent_state.py       # Stores task status
+|-- prompts.py           # AI instructions
+|-- tool_registry.py     # Registers available tools
+|-- reflex_rules.py      # Predefined incident rules
+|-- react_agent.py       # ReAct workflow
+|-- memory.py            # Stores relevant information
 |-- tests/
     |-- test_agent.py
     |-- test_reflex_rules.py
     |-- test_tool_registry.py
 
-WHAT EACH FILE DOES:
-
-agent.py
-Main agent logic.
-
-agent_state.py
-Stores the current task and investigation status.
-
-prompts.py
-Contains instructions given to the AI.
-
-tool_registry.py
-Registers tools the agent can use.
-
-reflex_rules.py
-Contains predefined rules for common incidents.
-
-react_agent.py
-Implements the Think, Act and Observe cycle.
-
-memory.py
-Stores relevant information from previous steps.
-
-RESULT:
-
-We will have an agent capable of investigating
-an incident using predefined tools.
+Result:
+An AI agent capable of investigating incidents.
 
 
-------------------------------------------------------------
-A3 - RAG KNOWLEDGE AGENT
-------------------------------------------------------------
+A3. RAG KNOWLEDGE AGENT
+-----------------------
+Purpose:
+Allow AI to search our own technical documents.
 
-WHAT IS RAG?
+RAG = Retrieval-Augmented Generation.
 
-RAG means Retrieval-Augmented Generation.
+Example:
+AI detects an OOMKilled incident.
+It searches our Kubernetes runbooks and previous incidents
+before recommending a solution.
 
-Imagine the AI detects an OOMKilled incident.
+How it works:
+1. Import documents.
+2. Split documents into smaller pieces.
+3. Convert text into embeddings.
+4. Store embeddings in a searchable database.
+5. Retrieve relevant information.
+6. Send information to the AI model.
+7. Generate an evidence-based answer.
 
-Instead of relying only on its general knowledge,
-we want it to search our own technical documentation.
+Embedding:
+A numerical representation of text meaning.
 
-For example:
-
-- Kubernetes troubleshooting guide.
-- Company runbooks.
-- Previous incident reports.
-- Memory troubleshooting documentation.
-
-HOW DOES IT WORK?
-
-Step 1:
-Upload technical documents.
-
-Step 2:
-Break documents into smaller pieces.
-
-Step 3:
-Convert these pieces into numerical representations
-called embeddings.
-
-Step 4:
-Store embeddings in a searchable database.
-
-Step 5:
-When an incident occurs, search for relevant information.
-
-Step 6:
-Send the relevant information to the AI model.
-
-Step 7:
-AI generates an answer using the retrieved information.
-
-WHAT IS AN EMBEDDING?
-
-An embedding converts text into a list of numbers.
-
-These numbers represent the meaning of the text.
-
-This allows the application to search for similar meanings,
-not just identical words.
-
-FILES WE WILL CREATE:
+Files:
 
 A3-rag-knowledge-agent/
-|
 |-- README.md
 |-- requirements.txt
-|-- ingestion.py
-|-- document_parser.py
-|-- chunker.py
-|-- embeddings.py
-|-- vector_store.py
-|-- retriever.py
-|-- context_builder.py
-|-- rag_pipeline.py
-|-- evaluator.py
+|-- ingestion.py         # Imports documents
+|-- document_parser.py   # Extracts document text
+|-- chunker.py           # Splits documents
+|-- embeddings.py        # Creates embeddings
+|-- vector_store.py      # Stores embeddings
+|-- retriever.py         # Searches documents
+|-- context_builder.py   # Prepares AI context
+|-- rag_pipeline.py      # Connects RAG steps
+|-- evaluator.py         # Evaluates results
 |-- knowledge_base/
 |   |-- kubernetes_runbook.md
 |   |-- oom_troubleshooting.md
@@ -471,301 +366,153 @@ A3-rag-knowledge-agent/
     |-- test_retriever.py
     |-- test_rag_pipeline.py
 
-WHAT EACH FILE DOES:
-
-ingestion.py
-Imports documents into our knowledge system.
-
-document_parser.py
-Extracts text from documents.
-
-chunker.py
-Breaks documents into smaller pieces.
-
-embeddings.py
-Converts text into numerical embeddings.
-
-vector_store.py
-Stores and searches embeddings.
-
-retriever.py
-Finds relevant information.
-
-context_builder.py
-Prepares retrieved information for the AI model.
-
-rag_pipeline.py
-Connects all RAG steps.
-
-evaluator.py
-Checks whether retrieval and answers are useful.
-
-knowledge_base/
-Contains our sample technical documentation.
-
-RESULT:
-
-The AI will be able to refer to our own runbooks
-while investigating incidents.
+Result:
+AI can use our own technical knowledge while investigating.
 
 
-------------------------------------------------------------
-A4 - MULTI-AGENT SYSTEM
-------------------------------------------------------------
+A4. MULTI-AGENT SYSTEM
+----------------------
+Purpose:
+Use multiple specialized AI agents instead of one agent
+doing everything.
 
-WHAT IS A MULTI-AGENT SYSTEM?
+Our agents:
 
-Instead of asking one AI agent to do everything,
-we create multiple specialized agents.
-
-Think of a company with different departments.
-
-Each department has a specific responsibility.
-
-Our project will have:
-
-1. INVESTIGATION AGENT
+1. Investigation Agent
    Collects incident information.
 
-2. KNOWLEDGE AGENT
-   Searches technical documentation.
+2. Knowledge Agent
+   Searches technical documents.
 
-3. RCA AGENT
-   Analyzes evidence and identifies possible root causes.
+3. RCA Agent
+   Identifies possible root causes.
 
-4. REMEDIATION AGENT
+4. Remediation Agent
    Suggests configuration changes.
 
-5. VERIFICATION AGENT
-   Checks whether the application recovered.
+5. Verification Agent
+   Checks application health.
 
-HOW DO THEY COMMUNICATE?
-
-The agents exchange structured information.
-
-Example:
-
-Investigation Agent:
-Pod terminated with exit code 137.
-
-Knowledge Agent:
-Found a runbook explaining memory-related failures.
-
-RCA Agent:
-Memory limit may be insufficient.
-
-Remediation Agent:
-Proposes increasing the memory limit.
-
-Verification Agent:
-Will check application health after deployment.
-
-FILES WE WILL CREATE:
+Files:
 
 A4-multi-agent/
-|
 |-- README.md
 |-- requirements.txt
-|-- orchestrator.py
-|-- investigation_agent.py
-|-- knowledge_agent.py
-|-- rca_agent.py
-|-- remediation_agent.py
-|-- verification_agent.py
-|-- shared_state.py
-|-- agent_messages.py
+|-- orchestrator.py          # Coordinates agents
+|-- investigation_agent.py   # Investigates incidents
+|-- knowledge_agent.py       # Searches knowledge
+|-- rca_agent.py             # Root cause analysis
+|-- remediation_agent.py     # Suggests fixes
+|-- verification_agent.py    # Checks recovery
+|-- shared_state.py          # Shared information
+|-- agent_messages.py        # Agent communication
 |-- tests/
     |-- test_orchestrator.py
     |-- test_agent_messages.py
 
-WHAT EACH FILE DOES:
-
-orchestrator.py
-Coordinates all agents.
-
-investigation_agent.py
-Investigates incidents.
-
-knowledge_agent.py
-Retrieves technical knowledge.
-
-rca_agent.py
-Performs root cause analysis.
-
-remediation_agent.py
-Creates remediation proposals.
-
-verification_agent.py
-Checks application health.
-
-shared_state.py
-Stores information shared between agents.
-
-agent_messages.py
-Defines how agents exchange information.
-
-RESULT:
-
-Multiple specialized agents will work together
-to investigate and resolve an incident.
+Result:
+Multiple agents work together to investigate incidents.
 
 
-------------------------------------------------------------
-A5 - HYBRID SEARCH
-------------------------------------------------------------
+A5. HYBRID SEARCH
+-----------------
+Purpose:
+Improve how our knowledge agent searches documents.
 
-WHAT IS HYBRID SEARCH?
+Two search methods:
 
-Imagine we are searching for an incident involving:
+1. Keyword Search
+   Finds exact words such as OOMKilled or exit code 137.
 
-"Payment pod OOMKilled with exit code 137"
+2. Semantic Search
+   Finds documents with similar meanings.
 
-There are two ways to search.
-
-1. KEYWORD SEARCH
-
-Finds exact words such as:
-
-OOMKilled
-exit code 137
-memory limit
-
-2. SEMANTIC SEARCH
-
-Finds documents with similar meaning,
-even when the exact words are different.
-
-HYBRID SEARCH combines both approaches.
-
-We will also use:
+Hybrid Search combines both methods.
 
 BM25:
-A keyword-based search ranking technique.
+Ranks documents based on keyword relevance.
 
 RRF:
-Reciprocal Rank Fusion combines results from
-different search methods.
+Combines search rankings from different methods.
 
-FILES WE WILL CREATE:
+Files:
 
 A5-hybrid-search/
-|
 |-- README.md
 |-- requirements.txt
-|-- keyword_search.py
-|-- semantic_search.py
-|-- bm25_search.py
-|-- hybrid_retriever.py
-|-- rrf.py
-|-- reranker.py
-|-- search_evaluator.py
+|-- keyword_search.py     # Keyword search
+|-- semantic_search.py    # Meaning-based search
+|-- bm25_search.py        # BM25 ranking
+|-- hybrid_retriever.py   # Combines search results
+|-- rrf.py                # Combines rankings
+|-- reranker.py           # Reorders results
+|-- search_evaluator.py   # Evaluates search quality
 |-- tests/
     |-- test_keyword_search.py
     |-- test_hybrid_retriever.py
     |-- test_rrf.py
 
-RESULT:
-
-The knowledge agent will find more relevant
-troubleshooting information.
+Result:
+The knowledge agent finds more relevant documents.
 
 
-------------------------------------------------------------
-A6 - SAFE, EVALUATED AND COST-OPTIMIZED AI
-------------------------------------------------------------
+A6. SAFE, EVALUATED AND COST-OPTIMIZED AI
+-----------------------------------------
+Purpose:
+Make AI recommendations safer and measurable.
 
-WHY DO WE NEED THIS?
-
-AI can produce incorrect answers.
-
-AI can also misunderstand an incident.
-
-We cannot blindly trust its recommendations.
-
-We will introduce safety checks.
-
-EXAMPLE:
-
-AI proposes:
-
-Increase memory limit from 32Mi to 4Gi.
-
-Our system checks:
-
-- Is the proposed YAML valid?
-- Is the resource change reasonable?
-- Is there supporting evidence?
-- Is the rollback available?
-- Is human approval available?
-
-We will also evaluate AI quality.
-
-WHAT IS A GOLDEN DATASET?
-
-A collection of known test cases with expected results.
+Why?
+AI can provide incorrect recommendations.
+We must validate its output before presenting a fix.
 
 Example:
+AI suggests increasing memory from 32Mi to 4Gi.
 
-Input:
-Pod OOMKilled with exit code 137.
+Our application checks:
+- Is the YAML valid?
+- Is the change reasonable?
+- Is there supporting evidence?
+- Is a rollback plan available?
+- Is human approval required?
 
-Expected:
-The AI should identify a possible memory-related issue.
+Golden Dataset:
+A collection of test cases with expected answers.
 
-We compare the AI response with the expected result.
+LLM-as-a-Judge:
+An AI model evaluates another AI response.
 
-WHAT IS LLM-AS-A-JUDGE?
+We will also track token usage and API costs.
 
-Another AI model evaluates the quality of an AI response.
-
-It can assess:
-
-- Accuracy.
-- Relevance.
-- Evidence.
-- Completeness.
-
-We will also monitor token usage and AI API costs.
-
-FILES WE WILL CREATE:
+Files:
 
 A6-safe-evaluated-cost/
-|
 |-- README.md
 |-- requirements.txt
-|-- guardrails.py
-|-- input_validator.py
-|-- output_validator.py
-|-- yaml_validator.py
-|-- policy_engine.py
-|-- golden_dataset.json
-|-- evaluation.py
-|-- hallucination_checks.py
-|-- token_tracker.py
-|-- cost_calculator.py
+|-- guardrails.py             # Safety rules
+|-- input_validator.py        # Validates input
+|-- output_validator.py       # Validates AI output
+|-- yaml_validator.py         # Checks YAML
+|-- policy_engine.py          # Enforces policies
+|-- golden_dataset.json       # Known test cases
+|-- evaluation.py             # Evaluates AI results
+|-- hallucination_checks.py   # Checks unsupported answers
+|-- token_tracker.py          # Tracks token usage
+|-- cost_calculator.py        # Estimates AI costs
 |-- tests/
     |-- test_guardrails.py
     |-- test_yaml_validator.py
     |-- test_evaluation.py
 
-RESULT:
-
-AI recommendations will be validated and evaluated
-before they reach a human for approval.
+Result:
+AI recommendations are checked before human approval.
 
 
-------------------------------------------------------------
-A7 - LANGGRAPH ORCHESTRATION
-------------------------------------------------------------
+A7. LANGGRAPH ORCHESTRATION
+---------------------------
+Purpose:
+Control the complete AI workflow using LangGraph.
 
-WHAT IS LANGGRAPH?
-
-LangGraph is a framework used to build AI workflows
-as connected steps.
-
-Imagine our complete incident investigation.
-
-The workflow is:
+Workflow:
 
 START
   |
@@ -787,176 +534,105 @@ Remediation Proposal
   v
 Human Approval
   |
-  +---- REJECT ----> END
+  +-- REJECT --> END
   |
-  +---- HOLD ------> WAIT
+  +-- HOLD ----> WAIT
   |
-  +---- APPROVE ---> GitHub PR
-                         |
-                         v
-                    CI Validation
-                         |
-                         v
-                    Deployment
-                         |
-                         v
-                    Health Check
-                         |
-                         v
-                        END
+  +-- APPROVE -> GitHub PR
+                    |
+                    v
+                CI Validation
+                    |
+                    v
+                Deployment
+                    |
+                    v
+                Health Check
+                    |
+                    v
+                   END
 
-LangGraph manages the workflow and its state.
+LangGraph manages workflow steps and their state.
 
-WHAT IS HUMAN-IN-THE-LOOP?
+Human-in-the-Loop:
+The workflow pauses and waits for a human decision.
 
-It means a human can interrupt the workflow
-and make a decision before it continues.
-
-For our project:
-
-The workflow must stop before remediation is applied.
-
-It must wait for APPROVE, REJECT or HOLD.
-
-FILES WE WILL CREATE:
+Files:
 
 A7-langgraph-orchestration/
-|
 |-- README.md
 |-- requirements.txt
-|-- graph.py
-|-- state.py
-|-- nodes.py
-|-- edges.py
-|-- routing.py
-|-- checkpointing.py
-|-- approval.py
-|-- recovery.py
+|-- graph.py          # Defines workflow
+|-- state.py          # Stores workflow state
+|-- nodes.py          # Workflow steps
+|-- edges.py          # Connects steps
+|-- routing.py        # Controls workflow direction
+|-- checkpointing.py  # Saves workflow progress
+|-- approval.py       # Handles human approval
+|-- recovery.py       # Handles retries and recovery
 |-- tests/
     |-- test_graph.py
     |-- test_routing.py
     |-- test_approval.py
 
-RESULT:
-
-We will have a controlled AI workflow
-with approval, retry and recovery capabilities.
+Result:
+A controlled workflow with approval, retry and recovery.
 
 
-------------------------------------------------------------
-A8 - ENTERPRISE AI SRE COPILOT
-------------------------------------------------------------
+A8. ENTERPRISE AI SRE COPILOT
+-----------------------------
+Purpose:
+Integrate A1 to A7 into one complete application.
 
-THIS IS THE FINAL INTEGRATION MODULE.
-
-All previous modules will work together here.
-
-Imagine a real production-like incident.
-
-SCENARIO:
-
-The Survey Service is experiencing failures.
-
-Our complete workflow:
+Complete workflow:
 
 1. INCIDENT DETECTION
-
-A monitoring alert is received.
+   Receives an alert.
 
 2. INVESTIGATION
-
-The system collects:
-
-- Pod status.
-- Application logs.
-- Kubernetes events.
-- Resource information.
-- Deployment health.
+   Collects Pod status, logs, events and metrics.
 
 3. KNOWLEDGE RETRIEVAL
-
-The RAG agent searches relevant runbooks.
+   Searches relevant runbooks.
 
 4. ROOT CAUSE ANALYSIS
-
-The AI agents analyze the collected evidence.
+   Agents analyze the collected evidence.
 
 5. REMEDIATION PROPOSAL
-
-The system prepares:
-
-- Problem summary.
-- Root cause hypothesis.
-- Supporting evidence.
-- Proposed YAML changes.
-- Risk assessment.
-- Rollback plan.
+   Prepares diagnosis, YAML changes, risks and rollback.
 
 6. HUMAN APPROVAL
-
-The human receives a short explanation.
-
-Available decisions:
-
-APPROVE
-REJECT
-HOLD
+   Human chooses APPROVE, REJECT or HOLD.
 
 7. GITHUB INTEGRATION
-
-After approval:
-
-- Create a GitHub branch.
-- Generate a YAML change.
-- Create a Pull Request.
-- Run automated tests.
+   Creates branch, updates YAML and opens a Pull Request.
 
 8. GITOPS DEPLOYMENT
-
-After required checks and deployment approval,
-Argo CD synchronizes the reviewed configuration.
+   CI validates changes and Argo CD deploys approved changes.
 
 9. VERIFICATION
-
-The system checks:
-
-- Pod health.
-- Application health.
-- Error rate.
-- Restart count.
-- Incident status.
+   Checks Pod health, application health and metrics.
 
 10. AUDIT
+    Records incident, evidence, approval and deployment result.
 
-Store:
-
-- Original incident.
-- AI diagnosis.
-- Evidence.
-- Proposed remediation.
-- Human decision.
-- GitHub PR.
-- Deployment result.
-- Rollback information.
-
-FILES WE WILL CREATE:
+Files:
 
 A8-enterprise-ai-sre-copilot/
-|
 |-- README.md
 |-- requirements.txt
-|-- main.py
-|-- incident_manager.py
-|-- alert_receiver.py
-|-- kubernetes_collector.py
-|-- log_collector.py
-|-- diagnosis_engine.py
-|-- remediation_manager.py
-|-- approval_manager.py
-|-- github_client.py
-|-- argocd_client.py
-|-- health_verifier.py
-|-- audit_logger.py
+|-- main.py                 # Starts Copilot application
+|-- incident_manager.py     # Manages incidents
+|-- alert_receiver.py       # Receives alerts
+|-- kubernetes_collector.py # Collects Kubernetes data
+|-- log_collector.py        # Collects application logs
+|-- diagnosis_engine.py     # Analyzes incidents
+|-- remediation_manager.py  # Prepares proposed fixes
+|-- approval_manager.py     # Manages approval
+|-- github_client.py        # GitHub communication
+|-- argocd_client.py        # Argo CD communication
+|-- health_verifier.py      # Checks application health
+|-- audit_logger.py         # Records activities
 |-- api/
 |   |-- incidents.py
 |   |-- approvals.py
@@ -972,97 +648,37 @@ A8-enterprise-ai-sre-copilot/
     |-- test_remediation_manager.py
     |-- test_health_verifier.py
 
-RESULT:
-
-One integrated AI SRE Copilot that can investigate
-production-like incidents and propose controlled remediation.
-
-============================================================
-HOW WILL THE MODULES COMMUNICATE?
-============================================================
-
-A1 provides Python application logic.
-
-A2 provides agent intelligence and tool usage.
-
-A3 provides knowledge retrieval.
-
-A4 provides multiple specialized agents.
-
-A5 improves knowledge searching.
-
-A6 adds safety and evaluation.
-
-A7 controls the complete workflow.
-
-A8 integrates everything into the final application.
-
-Think of it this way:
-
-A1 = FOUNDATION
-A2 = BRAIN
-A3 = KNOWLEDGE
-A4 = TEAM OF SPECIALISTS
-A5 = BETTER SEARCH
-A6 = SAFETY
-A7 = WORKFLOW CONTROLLER
-A8 = COMPLETE PRODUCT
+Result:
+One integrated AI SRE Copilot for investigating incidents
+and proposing controlled remediation.
 
 ============================================================
-API CALLS AND AI CALLS - IMPORTANT DIFFERENCE
+5. HOW WILL THE MODULES WORK TOGETHER?
 ============================================================
 
-There are three main types of communication.
-
-1. INTERNAL API CALLS
-
-Example:
-
-Survey Service calls Auth Service to validate a user.
-
-This is communication between our own applications.
-
-2. EXTERNAL API CALLS
-
-Example:
-
-Our application calls the OpenAI API.
-
-It sends a prompt and incident evidence.
-
-The AI provider returns a response.
-
-This may incur API charges depending on the provider
-and usage.
-
-3. KUBERNETES API CALLS
-
-Our Python application communicates with Kubernetes
-through the Kubernetes API.
-
-It can retrieve:
-
-- Pods.
-- Events.
-- Deployments.
-- Services.
-- Resource information.
-
-Initially, investigation will use read-only permissions.
-
-No production modifications will be allowed automatically.
+A1 = Python foundation.
+A2 = AI agent intelligence.
+A3 = Knowledge retrieval.
+A4 = Team of specialized agents.
+A5 = Better document search.
+A6 = AI safety and evaluation.
+A7 = Workflow controller.
+A8 = Complete AI SRE Copilot.
 
 ============================================================
-WHERE WILL THE CODE LIVE?
+6. WHERE WILL THE CODE LIVE?
 ============================================================
-
-The parent repository will contain:
 
 AI-SRE-COPILOT/
 |
 |-- apps/
 |   |-- auth-service/
 |   |-- survey-service/
+|
+|-- copilot-app/
+|   |-- main.py
+|   |-- incident_manager.py
+|   |-- integrations/
 |
 |-- modules/
 |   |-- A-core/
@@ -1087,135 +703,100 @@ AI-SRE-COPILOT/
 |   |-- IMPLEMENTATION-PLAN.md
 |
 |-- scripts/
-|   |-- setup.sh
-|
 |-- tests/
-|
 |-- requirements-dev.txt
 |-- Makefile
 |-- .env.example
 |-- README.md
 
 ============================================================
-HOW WILL WE START THE PROJECT?
+7. HOW WILL WE RUN THE PROJECT?
 ============================================================
 
-You asked whether you need to install everything manually.
+We will automate dependency installation using Docker.
 
-NO, you will not need to manually install every Python
-library, AI framework or application dependency.
+One-time prerequisites:
+1. Git installed.
+2. Docker Desktop installed and running.
 
-Our goal is to automate those installations.
-
-But there are two prerequisites:
-
-1. Git must be available.
-2. Docker Desktop must be installed and running.
-
-Once these are ready:
+Commands:
 
 make setup
-
-Checks Docker and Git and creates the local .env file.
+Checks the environment and creates .env.
 
 make up
-
-Builds the application containers and starts the services.
-Docker installs the Python packages listed in each
-microservice's requirements.txt during image building.
+Builds and starts application containers.
+Docker installs the Python dependencies.
 
 make test
-
-Runs the tests.
-
-IMPORTANT:
-The current Makefile also creates a Python virtual environment
-and installs pytest and httpx on your Mac for testing.
-So this command currently needs Python 3.
+Runs automated tests.
 
 make logs
-
 Displays application logs.
 
 make down
-
 Stops the containers.
 
-These commands are not magic installation commands.
-They are shortcuts that execute instructions already
-written in our Makefile.
+These commands are shortcuts defined in the Makefile.
+
+Our goal is to avoid manually installing individual
+Python packages on your MacBook.
 
 ============================================================
-CURRENT STATUS - HONEST UPDATE
+8. CURRENT IMPLEMENTATION STATUS
 ============================================================
 
-The existing repository contains:
-
-- Parent folder structure.
+Already created:
+- Parent repository structure.
 - Module README files.
-- Two microservice implementations.
-- Dockerfiles.
-- Docker Compose configuration.
-- Initial test files.
-- Makefile.
-- Setup script.
+- Two sample microservices.
+- Dockerfiles and Docker Compose.
+- Initial tests.
+- Makefile and setup script.
 - Architecture documentation.
 
-However:
+Not implemented yet:
+- A1 to A8 actual module code.
+- Complete RAG pipeline.
+- Multi-agent system.
+- LangGraph workflow.
+- Integrated AI SRE Copilot.
 
-- A1 to A8 are not implemented yet.
-- There is no completed RAG pipeline.
-- There is no completed multi-agent system.
-- There is no completed LangGraph workflow.
-- There is no integrated AI SRE Copilot yet.
-
-We will implement actual code in every module.
-
-A folder with only README.md will never be considered
-a completed module.
+A folder containing only README.md is NOT a completed module.
 
 ============================================================
-OUR IMPLEMENTATION RULE
+9. OUR IMPLEMENTATION RULE
 ============================================================
 
-For every module:
+Every module must contain:
 
-1. Actual working source code.
+1. Working source code.
 2. Requirements file.
-3. Configuration and environment examples.
+3. Configuration and .env example.
 4. Unit tests.
-5. Integration tests wherever applicable.
+5. Integration tests where required.
 6. Sample inputs and outputs.
-7. Docker support where needed.
+7. Docker support where required.
 8. Detailed README.
 9. API documentation.
 10. Interview explanation.
 
-We will not mark a module COMPLETE until its code
-runs and its tests pass.
+A module is COMPLETE only when its code runs and
+its tests pass.
 
 ============================================================
-FINAL OBJECTIVE
+10. FINAL OBJECTIVE
 ============================================================
 
-One GitHub parent repository.
-
-Two lightweight microservices.
-
-Eight fully implemented core capabilities.
-
-Seven advanced capabilities.
-
-Four specialized capabilities.
-
-One integrated AI SRE Copilot.
-
-Local MacBook development.
-
-Human approval before remediation.
-
-Automated testing and documentation.
-
-No mandatory cloud account.
+- One GitHub parent repository.
+- Two sample microservices.
+- Eight core capabilities (Module A).
+- Seven advanced capabilities (Module B).
+- Four specialized capabilities (Module C).
+- One integrated AI SRE Copilot.
+- Local MacBook development.
+- Human approval before remediation.
+- Automated testing and documentation.
+- No mandatory cloud account.
 
 ============================================================
